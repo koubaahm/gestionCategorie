@@ -23,37 +23,33 @@ public class Categorie {
 
     private LocalDate dateCreation;
 
-    // parent
     @DBRef
     private Categorie parent;
 
-    // enfants
     @DBRef
     private List<Categorie> enfants;
 
     private boolean estRacine;
 
-    // constructeur personilisé pour la date de creation et aussi voir si il est parent ou enfant
+    // Constructeur par défaut
+    public Categorie() {}
+
+    // constructeur personnalisé
     public Categorie(String nom, Categorie parent) {
         this.nom = nom;
         this.dateCreation = LocalDate.now();
         this.estRacine = (parent == null);
     }
 
-
+    // Setter pour parent avec vérifications
     public void setParent(Categorie parent) {
-        // empecher  qu'une catégorie soit enfant d'elle-même
         if (parent != null && parent.equals(this)) {
             throw new IllegalArgumentException("une catégorie ne peut pas être enfant d'elle-même.");
         }
-
-        // empecher qu'une catégorie ait plus d'un parent
         if (this.parent != null && parent != null && !this.parent.equals(parent)) {
             throw new IllegalArgumentException("une catégorie ne peut pas avoir deux parents.");
         }
-
         this.parent = parent;
         this.estRacine = (parent == null);
     }
-
 }
