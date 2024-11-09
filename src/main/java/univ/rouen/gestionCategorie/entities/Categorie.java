@@ -2,39 +2,41 @@ package univ.rouen.gestionCategorie.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
 
+import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
 
-@Document(collection = "categories")
+@Entity
+@Table(name = "categories")
 @Data
 @AllArgsConstructor
 public class Categorie {
 
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Indexed(unique = true)
+    @Column(unique = true, nullable = false)
     private String nom;
 
+    @Column(name = "date_creation")
     private LocalDate dateCreation;
 
-    @DBRef
+    @ManyToOne
+    @JoinColumn(name = "parent_id") // Clé étrangère vers la table parent
     private Categorie parent;
 
-    @DBRef
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private List<Categorie> enfants;
 
+    @Column(name = "est_racine")
     private boolean estRacine;
 
     // Constructeur par défaut
     public Categorie() {}
 
-    // constructeur personnalisé
+    // Constructeur personnalisé
     public Categorie(String nom, Categorie parent) {
         this.nom = nom;
         this.dateCreation = LocalDate.now();
